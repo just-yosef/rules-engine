@@ -1,0 +1,1 @@
+export { RuleDto } from "./createRule.dto"
