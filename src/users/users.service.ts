@@ -40,7 +40,7 @@ export class UsersService {
         }
     }
 
-    async signin(dto: signinBody) { 
+    async signin(dto: signinBody) {
         try {
             const { email, password } = dto;
             const user = await this.User.findOne({ email });
@@ -52,8 +52,8 @@ export class UsersService {
                 throw new UnauthorizedException('Invalid email or password');
             }
             const payload = { id: user._id, email: user.email };
-            const token = signJWT(payload, { expiresIn: "24h"})
-            const refreshToken = signJWT(payload, { expiresIn: "7d"})
+            const token = signJWT(payload, { expiresIn: "24h" })
+            const refreshToken = signJWT(payload, { expiresIn: "7d" })
             return {
                 token,
                 refreshToken,

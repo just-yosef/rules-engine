@@ -13,7 +13,6 @@ async function bootstrap() {
       }
     ))
   app.use(cookieParser(process.env.COOKIE_SECRET));
-  await app.listen(process.env.PORT ?? 3000).then(() => console.log("Nest Server Is Running")
-  );
+  await app.listen(process.env.PORT ?? 3000).then(() => console.log("Nest Server Is Running"));
 }
 bootstrap();
