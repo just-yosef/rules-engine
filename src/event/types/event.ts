@@ -1,6 +1,6 @@
 import { EventType } from "src/rules/types";
-import { OrderStatus } from "src/types";
 import { UserSegment, UserStatus } from "../users/types";
+import { OrderStatus, } from "./index";
 
 type OrderEventTypes =
     "order_created" |

@@ -1,12 +1,11 @@
 
 import { Type } from "class-transformer";
 import { IsIn, IsNotEmptyObject, IsString, ValidateNested, } from "class-validator";
-import type { Event, PaymentObject, UserObject } from "../types";
+import type { Event, OrderObject, PaymentObject, UserObject } from "../types";
 import { events } from "src/rules/constants";
 import { UserDto } from "./user.dto";
 import { OrderDto } from "./order.dto";
 import { PaymentDto } from "./payment.dto";
-import { OrderObject } from "src/types";
 import { IsValidEvent } from "../decorators"
 export class dataObjectDTO {
     data: UserObject | OrderObject | PaymentObject;
