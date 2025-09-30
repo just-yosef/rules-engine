@@ -1,24 +1,25 @@
-import { Body, Controller, Get, Post, Req, Session } from '@nestjs/common';
-import { SigninDto, SignupDto } from './dtos';
+import { Body, Controller, Get, Param, Patch, } from '@nestjs/common';
 import { UsersService } from "./users.service"
+import { UpdateUserDto } from './dtos';
 
-@Controller('/auth/users')
-
+@Controller('users')
 export class UsersController {
     constructor(
-        private readonly userService: UsersService
+        private readonly usersService: UsersService
     ) { }
     @Get()
     async getAllUsers() {
-        return this.userService.findAll()
+        return this.usersService.findAll()
     }
-    @Post("signup")
-    async signup(@Body() userObj: SignupDto) {
-        return this.userService.signup(userObj);
+    @Get('/:id')
+    async getUser(@Param('id') id: string) {
+        return this.usersService.findOne(id);
     }
-    @Post("signin")
-    async signin(@Body() credentails: SigninDto) {
-        const user = await this.userService.signin(credentails);
-        return user;
+    @Patch("/:id")
+    async updateUser(
+        @Param('id') id: string,
+        @Body() dto: UpdateUserDto,
+    ) {
+        return this.usersService.updateUser(id, dto);
     }
 }

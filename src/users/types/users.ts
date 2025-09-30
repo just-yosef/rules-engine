@@ -21,6 +21,7 @@ interface IUserRequiredProperties {
     status?: UserStatus;
     createdAt?: Date;
     updatedAt?: Date;
+    id?: string
 }
 interface SecurityProperties {
     refreshToken?: string;
