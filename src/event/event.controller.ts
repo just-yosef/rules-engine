@@ -8,7 +8,6 @@ export class EventController {
 
     @Post()
     async create(@Body() body: EventDto): Promise<Event> {
-        body.data
         return this.eventService.create(body);
     }
 

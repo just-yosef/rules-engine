@@ -6,6 +6,8 @@ import { RulesModule } from './rules/rules.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './db.config';
 import { EventModule } from './event/event.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -20,6 +22,8 @@ import { EventModule } from './event/event.module';
       inject: [ConfigService],
       useClass: MongooseConfigService
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController,],
   providers: [AppService],
