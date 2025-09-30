@@ -16,7 +16,6 @@ export class IsNeedRefreshToken implements NestMiddleware {
     async use(req: Request, res: Response, next: NextFunction) {
         const { jwt, refreshToken } = req.cookies;
         if (!jwt && !refreshToken) throw new UnauthorizedException("please login")
-        // Need To Refresh
         if (refreshToken && !jwt) {
             try {
                 const verifyToken = verifyJWT(refreshToken) as user;
