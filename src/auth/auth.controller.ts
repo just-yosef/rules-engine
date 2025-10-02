@@ -5,6 +5,7 @@ import ms, { StringValue } from "ms"
 import { Post, Req, Res, Session, Body } from "@nestjs/common"
 import { SigninDto, SignupDto } from 'src/users/dtos';
 import { AuthService } from './auth.service';
+import { setAuthCookies } from './utils';
 @Controller('auth')
 export class AuthController {
     constructor(
@@ -18,8 +19,7 @@ export class AuthController {
     async signin(@Body() credentails: SigninDto, @Res({ passthrough: true }) response: Response, @Req() request: Request) {
         try {
             const user = await this.authService.signin(credentails);
-            response.cookie("jwt", user.token, { maxAge: ms(process.env.TOKEN_EXPIRATION! as StringValue) })
-            response.cookie("refreshToken", user.refreshToken, { maxAge: ms(process.env.REFRESH_TOKEN_EXPIRATION! as StringValue) })
+            setAuthCookies(response, user.token,user.refreshToken)
             return (user)
         } catch (error) {
             throw new BadRequestException(error,)

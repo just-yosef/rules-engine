@@ -4,9 +4,10 @@ import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModel, UserSchema } from "./user.model"
 import { IsNeedRefreshToken } from 'src/auth/middlewares';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }])],
+  imports: [MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }]), AuthModule],
   controllers: [UsersController],
   providers: [UsersService],
 

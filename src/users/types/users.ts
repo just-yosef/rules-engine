@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import { UserRole } from "../constants/users";
 
 type UserSegment =
     | "new_user"
@@ -16,7 +17,7 @@ interface IUserProfile {
 interface IUserRequiredProperties {
     email: string;
     password: string;
-    roles: string[];
+    roles: string[]
     name: string;
     status?: UserStatus;
     createdAt?: Date;
