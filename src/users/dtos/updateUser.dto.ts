@@ -20,7 +20,7 @@ export class UpdateUserDto {
     status: UserStatus
 
     @IsOptional()
-    @IsIn(USER_ROLES)
+    @IsIn(USER_ROLES, { each: true })
     roles: string[];
 
 }

@@ -12,21 +12,37 @@ export class UsersService {
         return users.length ? users : { message: "No Users" }
     }
     async findOne(id: string) {
-        const user = await this.User.findById(id);
+        const user = await this.User.findById(id).lean()
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found`);
         }
         return user;
     }
     async updateUser(id: string, dto: UpdateUserDto) {
-        const user = await this.User.findById(id);
-        if (!user) {
+        const updateQuery: any = {};
+
+        if (dto.password) {
+            updateQuery.password = await bcrypt.hash(dto.password, 10);
+        }
+
+        if (dto.name) updateQuery.name = dto.name;
+        if (dto.status) updateQuery.status = dto.status;
+
+        const updateOps: any = { $set: updateQuery };
+        if (dto.roles && dto.roles.length > 0) {
+            updateOps.$addToSet = { roles: { $each: dto.roles } };
+        }
+
+        const updatedUser = await this.User.findByIdAndUpdate(id, updateOps, {
+            new: true,
+        });
+
+        if (!updatedUser) {
             throw new NotFoundException('User not found');
         }
-        if (dto.password) {
-            dto.password = await bcrypt.hash(dto.password, 10);
-        }
-        const updatedUser = await this.User.findByIdAndUpdate(id, dto);
-        return updatedUser
+
+        return updatedUser;
     }
+
+
 }
