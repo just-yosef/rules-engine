@@ -6,7 +6,6 @@ import { Observable } from "rxjs";
 export class IsLoggedIn implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const { cookies } = context.switchToHttp().getRequest<Request>();
-        console.log(cookies.jwt);
         return !!cookies.jwt
     }
 }

@@ -19,7 +19,6 @@ export class IsAdmin implements NestInterceptor {
             }
             return next.handle()
         } catch (error) {
-            console.log(error.message);
             throw new BadRequestException(error.message || "Unknown Error")
         }
     }

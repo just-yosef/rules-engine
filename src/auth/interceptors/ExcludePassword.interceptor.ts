@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nes
 import { map, Observable } from "rxjs";
 
 import { ExcludePassword } from "../../users/dtos"
-import { instanceToPlain, plainToInstance, } from "class-transformer";
+import { plainToInstance, } from "class-transformer";
 @Injectable()
 export class ExecludePassword implements NestInterceptor {
     intercept(_: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {

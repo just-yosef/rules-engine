@@ -1,1 +1,3 @@
-export { IsLoggedIn } from "./isLoggedIn"
+export { IsLoggedIn } from "./isLoggedIn.guard"
+
+export { EmailConfirmedGuard } from "./EmailConfirmed.guard"

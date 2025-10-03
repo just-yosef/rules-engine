@@ -7,7 +7,8 @@ import { Exclude, Expose } from 'class-transformer';
 @Exclude()
 export class CreateUserDto implements IUserRequiredProperties {
     @IsOptional()
-    _id: Types.ObjectId;
+    _id: string;
+
     @Expose()
     @IsDate()
     createdAt: Date;

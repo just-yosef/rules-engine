@@ -1,8 +1,8 @@
-import { Schema, model, Types } from 'mongoose';
+import { Schema, model, Types, } from 'mongoose';
 import { USER_ROLES, USER_STATUS } from './constants';
-import { IUserRequiredProperties } from './types';
+import { IUserRequiredProperties, SecurityProperties } from './types';
 
-export interface IUserDocument extends IUserRequiredProperties { }
+export interface IUserDocument extends IUserRequiredProperties, SecurityProperties { }
 
 export const UserSchema = new Schema<IUserDocument>({
     email: { type: String, required: true, unique: true },
@@ -11,7 +11,10 @@ export const UserSchema = new Schema<IUserDocument>({
     status: { type: String, required: true, enum: USER_STATUS, default: 'pending' },
     name: { type: String },
     createdAt: { type: Date, default: () => new Date() },
-    updatedAt: { type: Date, default: () => new Date() }
+    updatedAt: { type: Date, default: () => new Date() },
+    isVerify: { type: Boolean, default: false },
+    otp: { type: String, default: undefined },
+
 }, { timestamps: true });
 
 export const UserModel = model<IUserDocument>('User', UserSchema);
