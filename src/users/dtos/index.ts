@@ -1,3 +1,5 @@
+export { UpdateVerifyDto } from "./verifyEmail.dto"
+
 export { ExcludePassword } from "./ExcludePassword.dto"
 
 export { UpdateUserDto } from "./updateUser.dto"

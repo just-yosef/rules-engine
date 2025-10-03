@@ -8,6 +8,7 @@ import { MongooseConfigService } from './db.config';
 import { EventModule } from './event/event.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { EmailsModule } from './emails/emails.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UsersModule,
     AuthModule,
+    EmailsModule,
   ],
   controllers: [AppController,],
   providers: [AppService],

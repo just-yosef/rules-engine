@@ -1,8 +1,12 @@
-import { Body, Controller, Get, Param, Patch, UseGuards, UseInterceptors, } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { UsersService } from "./users.service"
-import { UpdateUserDto } from './dtos';
+import { UpdateUserDto, UpdateVerifyDto } from './dtos';
 import { ExecludePassword, IsAdmin } from 'src/auth/interceptors';
-import { IsLoggedIn } from 'src/auth/guards';
+import { EmailConfirmedGuard, IsLoggedIn } from 'src/auth/guards';
+import { CurrentUser } from './decorators';
+import { IUserRequiredProperties } from './types';
+import type { IUserDocument } from './user.model';
+import type { Request } from 'express';
 
 @UseInterceptors(ExecludePassword)
 @Controller('users')
@@ -10,7 +14,13 @@ export class UsersController {
     constructor(
         private readonly usersService: UsersService
     ) { }
-
+    @UseGuards(IsLoggedIn)
+    @Patch("/verify-my-email")
+    async verifyEmail(
+        @CurrentUser() { id }: Pick<IUserRequiredProperties, "id">
+    ) {
+        return this.usersService.verifyEmail(id!);
+    }
     @UseGuards(IsLoggedIn)
     @UseInterceptors(IsAdmin)
     @Get()
@@ -22,6 +32,12 @@ export class UsersController {
     async getUser(@Param('id') id: string) {
         return this.usersService.findOne(id);
     }
+
+    @Post('/verify/:otp')
+    async verifyOtp(@Param('otp') otp: string, @Req() req: Request) {
+        return this.usersService.verifyOtp(otp, req.user!);
+    }
+
     @Patch("/:id")
     async updateUser(
         @Param('id') id: string,
@@ -29,4 +45,5 @@ export class UsersController {
     ) {
         return this.usersService.updateUser(id, dto);
     }
+
 }

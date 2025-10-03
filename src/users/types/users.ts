@@ -23,6 +23,8 @@ interface IUserRequiredProperties {
     createdAt?: Date;
     updatedAt?: Date;
     id?: string
+    isVerify?: boolean
+    _id?: string
 }
 interface SecurityProperties {
     refreshToken?: string;
@@ -30,6 +32,7 @@ interface SecurityProperties {
     lastLoginAt?: Date; // compute it when io server is closed 
     twoFactorEnabled?: boolean;
     twoFactorSecret?: string;
+    otp: string | undefined
 }
 interface IUser extends IUserProfile, IUserRequiredProperties, SecurityProperties { }
 

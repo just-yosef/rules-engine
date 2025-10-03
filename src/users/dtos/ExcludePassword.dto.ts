@@ -13,4 +13,8 @@ export class ExcludePassword implements Partial<IUserRequiredProperties> {
     status?: UserStatus;
     @Expose()
     roles?: UserRole[]
+    @Expose()
+    isVerify?: boolean | undefined;
+    @Expose()
+    otp: string
 }
