@@ -5,8 +5,8 @@ import { ExecludePassword, IsAdmin } from 'src/auth/interceptors';
 import { EmailConfirmedGuard, IsLoggedIn } from 'src/auth/guards';
 import { CurrentUser } from './decorators';
 import { IUserRequiredProperties } from './types';
-import type { IUserDocument } from './user.model';
 import type { Request } from 'express';
+import { RateLimiterGuard, RateLimit } from 'nestjs-rate-limiter'
 
 @UseInterceptors(ExecludePassword)
 @Controller('users')
@@ -14,15 +14,16 @@ export class UsersController {
     constructor(
         private readonly usersService: UsersService
     ) { }
-    @UseGuards(IsLoggedIn)
+    @UseGuards(IsLoggedIn, RateLimiterGuard)
+    @RateLimit({ points: 3, duration: 60, errorMessage: "you can verify your email after 1 min ago" })
     @Patch("/verify-my-email")
     async verifyEmail(
         @CurrentUser() { id }: Pick<IUserRequiredProperties, "id">
     ) {
         return this.usersService.verifyEmail(id!);
     }
-    @UseGuards(IsLoggedIn)
-    @UseInterceptors(IsAdmin)
+    @UseGuards(IsLoggedIn, RateLimiterGuard)
+    @RateLimit({ points: 3, duration: 60, errorMessage: "cant get all user now try after 1 min" })
     @Get()
     async getAllUsers() {
         return this.usersService.findAll()
@@ -33,11 +34,14 @@ export class UsersController {
         return this.usersService.findOne(id);
     }
 
+    @UseGuards(IsLoggedIn, RateLimiterGuard)
+    @RateLimit({ points: 3, duration: 60, errorMessage: "please try again later", })
     @Post('/verify/:otp')
     async verifyOtp(@Param('otp') otp: string, @Req() req: Request) {
         return this.usersService.verifyOtp(otp, req.user!);
     }
 
+    @UseInterceptors(IsAdmin)
     @Patch("/:id")
     async updateUser(
         @Param('id') id: string,
