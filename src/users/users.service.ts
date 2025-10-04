@@ -1,16 +1,21 @@
-import { BadRequestException, Injectable, NotFoundException, } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUserDocument, UserModel, } from "./user.model"
 import { Model } from 'mongoose';
 import bcrypt from "bcrypt"
-import { UpdateUserDto, UpdateVerifyDto, } from './dtos';
+import { CreateUserDto, UpdateUserDto, UpdateVerifyDto, } from './dtos';
 import { randomBytes, } from "crypto"
 import { EmailsService } from 'src/emails/emails.service';
 import { UnauthorizeException } from 'src/auth/exceptions/Unauthorize.exception';
+import { IUser } from './types';
+
 
 @Injectable()
 export class UsersService {
-    constructor(@InjectModel(UserModel.name) private readonly User: Model<IUserDocument>, private readonly emailsService: EmailsService) { }
+    constructor(
+        @InjectModel(UserModel.name) private readonly User: Model<IUserDocument>,
+        private readonly emailsService: EmailsService,
+    ) { }
     async findAll() {
         const users = await this.User.find();
         return users.length ? users : { message: "No Users" }
@@ -22,7 +27,18 @@ export class UsersService {
         }
         return user;
     }
-    async updateUser(id: string, dto: UpdateUserDto) {
+    async findUserByName(email: string) {
+        try {
+            const user = await this.User.findOne({ email })
+            if (!user) {
+                throw new NotFoundException(`User with name: ${email} not found`);
+            }
+            return user;
+        } catch (error) {
+            throw new BadRequestException(error.message)
+        }
+    }
+    async updateUser(id: string, dto: Partial<UpdateUserDto>) {
         const updateQuery: any = {};
         if (dto.password) {
             updateQuery.password = await bcrypt.hash(dto.password, 10);
@@ -53,11 +69,16 @@ export class UsersService {
         try {
             const otp = randomBytes(4).toString("hex")
             const user = await this.User.findByIdAndUpdate(userId, { otp }, { new: true });
-            
+
             await this.emailsService.sendEmail({ toEmail: user?.email || "test@email.com", message: `please verify your email /verify/${otp}` })
             return `Check Your Email And Verify It By Clicking Link`
         } catch (error) {
             throw new BadRequestException(error.message);
         }
+    }
+    async blockUser(email: string,) {
+        const user = await this.findUserByName(email);
+        await this.updateUser(user._id, { status: "blocked" })
+        return user
     }
 }

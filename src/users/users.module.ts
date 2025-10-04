@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -9,9 +9,16 @@ import { EmailsModule } from 'src/emails/emails.module';
 import { RateLimiterModule } from 'nestjs-rate-limiter'
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }]), AuthModule, EmailsModule, RateLimiterModule],
+  imports: [
+    MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }]),
+    AuthModule,
+    EmailsModule,
+    RateLimiterModule,
+    forwardRef(() => AuthModule)
+  ],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
