@@ -15,9 +15,7 @@ import { EventModule } from 'src/event/event.module';
     forwardRef(() => AuthModule),
     forwardRef(() => EventModule),
     EmailsModule,
-    RateLimiterModule.register({
-      keyPrefix: "users",
-    }),
+    RateLimiterModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

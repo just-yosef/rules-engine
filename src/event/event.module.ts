@@ -4,10 +4,12 @@ import { EventController } from './event.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Event, EventModel } from './event.model';
 import { UsersModule } from 'src/users/users.module';
+import { RateLimiterModule } from 'nestjs-rate-limiter';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: Event.name, schema: EventModel }]),
-  forwardRef(() => UsersModule)
+  forwardRef(() => UsersModule),
+  RateLimiterModule
   ],
   providers: [EventService,],
   controllers: [EventController],

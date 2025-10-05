@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 export function decodeUserFromToken(token: string) {
@@ -8,3 +9,4 @@ export function decodeUserFromToken(token: string) {
         throw new Error('Invalid or expired token');
     }
 }
+

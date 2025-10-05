@@ -19,6 +19,8 @@ export class Event {
     service: string;
     @Prop({ type: SchemaTypes.Mixed })
     data: UserObject | OrderObject | PaymentObject;
+    @Prop({ default: Date.now(), type: Date })
+    createdAt: Date
 }
 export type EventDocument = HydratedDocument<Event>
 

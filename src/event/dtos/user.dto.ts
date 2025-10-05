@@ -1,4 +1,5 @@
 import { IsEmail, IsEnum, IsIn, IsNumber, IsOptional, IsString } from "class-validator";
+import type { UserStatus } from "../users/types";
 
 export class UserDto {
     @IsString()
@@ -28,5 +29,5 @@ export class UserDto {
     @IsIn(["active", "inactive", "banned"], {
         message: "status must be one of: active, inactive, banned",
     })
-    status: "active" | "inactive" | "banned";
+    status: UserStatus
 }
