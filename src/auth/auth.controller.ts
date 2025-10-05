@@ -7,12 +7,15 @@ import { SigninDto, SignupDto } from 'src/users/dtos';
 import { AuthService } from './auth.service';
 import { setAuthCookies } from './utils';
 import { UsersService } from 'src/users/users.service';
+import { EventService } from 'src/event/event.service';
+import { IsValidEvent } from 'src/event/decorators';
+import { UserDto } from 'src/event/dtos';
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        private readonly usersService: UsersService
-
+        private readonly usersService: UsersService,
+        private readonly eventService: EventService
     ) { }
     @Post("signup")
     async signup(@Body() userObj: SignupDto) {
@@ -27,14 +30,19 @@ export class AuthController {
         let loginAttempts = request.cookies["login-attempts"] || 1
         response.cookie("login-attempts", ++loginAttempts, { maxAge: ms("10m") })
         const cookies = request.cookies;
-        // Block this user if attempts > 10
         if (+cookies["login-attempts"] >= 10) {
             return this.usersService.blockUser(credentails.email)
         };
-        const user = await this.authService.signin(credentails);
-        setAuthCookies(response, user.token, user.refreshToken)
-        return (user)
-
+        const { token, refreshToken, user: { email, _id, status, name, } } = await this.authService.signin(credentails);
+        setAuthCookies(response, token, refreshToken);
+        await this.eventService.create({
+            service: "users", eventName: "user_logged_in", data: {
+                userId: _id,
+                email,
+                status
+            } as UserDto
+        })
+        return { email, name, token, refreshToken }
     }
 
     @Post('signout')

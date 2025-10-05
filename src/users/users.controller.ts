@@ -14,6 +14,12 @@ export class UsersController {
     constructor(
         private readonly usersService: UsersService
     ) { }
+
+    @Get('/:id')
+    async getUser(@Param('id') id: string) {
+        return await this.usersService.findOne(id);
+    }
+
     @UseGuards(IsLoggedIn, RateLimiterGuard)
     @RateLimit({ points: 3, duration: 60, errorMessage: "you can verify your email after 1 min ago" })
     @Patch("/verify-my-email")
@@ -29,10 +35,6 @@ export class UsersController {
         return this.usersService.findAll()
     }
 
-    @Get('/:id')
-    async getUser(@Param('id') id: string) {
-        return this.usersService.findOne(id);
-    }
 
     @UseGuards(IsLoggedIn, RateLimiterGuard)
     @RateLimit({ points: 3, duration: 60, errorMessage: "please try again later", })
@@ -41,7 +43,7 @@ export class UsersController {
         return this.usersService.verifyOtp(otp, req.user!);
     }
 
-    @UseInterceptors(IsAdmin)
+    // @UseInterceptors(IsAdmin)
     @Patch("/:id")
     async updateUser(
         @Param('id') id: string,

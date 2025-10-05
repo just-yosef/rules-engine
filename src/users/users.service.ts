@@ -7,7 +7,6 @@ import { CreateUserDto, UpdateUserDto, UpdateVerifyDto, } from './dtos';
 import { randomBytes, } from "crypto"
 import { EmailsService } from 'src/emails/emails.service';
 import { UnauthorizeException } from 'src/auth/exceptions/Unauthorize.exception';
-import { IUser } from './types';
 
 
 @Injectable()
@@ -21,12 +20,11 @@ export class UsersService {
         return users.length ? users : { message: "No Users" }
     }
     async findOne(id: string) {
-        const user = await this.User.findById(id).lean()
-        if (!user) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
+        const user = await this.User.findById(id);
+        if (!user) throw new NotFoundException(`User with id ${id} not found`);
         return user;
     }
+
     async findUserByName(email: string) {
         try {
             const user = await this.User.findOne({ email })

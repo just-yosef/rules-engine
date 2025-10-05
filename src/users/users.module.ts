@@ -7,14 +7,16 @@ import { IsNeedRefreshToken } from 'src/auth/middlewares';
 import { AuthModule } from 'src/auth/auth.module';
 import { EmailsModule } from 'src/emails/emails.module';
 import { RateLimiterModule } from 'nestjs-rate-limiter'
+import { EventModule } from 'src/event/event.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }]),
-    AuthModule,
-    EmailsModule,
     RateLimiterModule,
-    forwardRef(() => AuthModule)
+    forwardRef(() => EventModule),
+    forwardRef(() => AuthModule),
+    EmailsModule,
+
   ],
   controllers: [UsersController],
   providers: [UsersService],
