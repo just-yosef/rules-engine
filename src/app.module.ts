@@ -9,6 +9,7 @@ import { EventModule } from './event/event.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailsModule } from './emails/emails.module';
+import { RateLimiterModule } from 'nestjs-rate-limiter';
 
 
 @Module({
@@ -23,6 +24,7 @@ import { EmailsModule } from './emails/emails.module';
       inject: [ConfigService],
       useClass: MongooseConfigService
     }),
+
     UsersModule,
     AuthModule,
     EmailsModule,
