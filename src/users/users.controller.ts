@@ -6,9 +6,14 @@ import { EmailConfirmedGuard, IsLoggedIn } from 'src/auth/guards';
 import { CurrentUser } from './decorators';
 import { IUserRequiredProperties } from './types';
 import type { Request } from 'express';
+
+import { RateLimiterGuard, RateLimit } from 'nestjs-rate-limiter';
+
+
 import { RateLimiterGuard, RateLimit } from 'nestjs-rate-limiter'
 
 @UseInterceptors(ExecludePassword)
+@UseGuards(RateLimiterGuard)
 @Controller('users')
 export class UsersController {
     constructor(
@@ -22,8 +27,14 @@ export class UsersController {
     ) {
         return this.usersService.verifyEmail(id!);
     }
+
+    @RateLimit({ points: 3, errorMessage: "can not reach this endpoint for a 10 mins", duration: 600 })
+    @UseGuards(IsLoggedIn)
+    @UseInterceptors(IsAdmin)
+
     @UseGuards(IsLoggedIn, RateLimiterGuard)
     @RateLimit({ points: 3, duration: 60, errorMessage: "cant get all user now try after 1 min" })
+
     @Get()
     async getAllUsers() {
         return this.usersService.findAll()
