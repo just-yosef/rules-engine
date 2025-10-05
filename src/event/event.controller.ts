@@ -1,11 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { EventService } from './event.service';
 import { EventDto } from './dtos/event.dto';
 import { Event } from './event.model';
+import { IsAdmin } from 'src/auth/interceptors';
 @Controller('event')
 export class EventController {
     constructor(private readonly eventService: EventService) { }
-
+    @UseInterceptors(IsAdmin)
     @Post()
     async create(@Body() body: EventDto): Promise<Event> {
         return this.eventService.create(body);

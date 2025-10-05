@@ -1,13 +1,13 @@
-import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, CallHandler, ExecutionContext, forwardRef, Inject, Injectable, NestInterceptor, UnauthorizedException } from "@nestjs/common";
 import { Request } from "express";
-import { map } from "rxjs";
 
 import { UsersService } from "src/users/users.service";
 import { decodeJWT } from "src/users/utils";
 @Injectable()
 export class IsAdmin implements NestInterceptor {
     constructor(
-        private readonly usersService: UsersService
+        @Inject(forwardRef(() => UsersService))
+        private readonly usersService: UsersService,
     ) { }
     async intercept(context: ExecutionContext, next: CallHandler) {
         try {
