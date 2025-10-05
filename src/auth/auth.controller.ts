@@ -23,7 +23,7 @@ export class AuthController {
     @Post('signout')
     async signout(@Res({ passthrough: true }) res: Response) {
         res.clearCookie('jwt');
-        res.clearCookie('refreshToken');
+        res.clearCookie('refreshToken'); 
         return { message: 'Signed out successfully' };
     }
 }
