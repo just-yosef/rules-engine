@@ -9,14 +9,18 @@ import { EventModule } from './event/event.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailsModule } from './emails/emails.module';
+
 import { RateLimiterModule } from 'nestjs-rate-limiter';
+
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+
 
 
 @Module({
   imports: [
     RulesModule,
     EventModule,
-
     ConfigModule.forRoot({
       isGlobal: true,
     }),

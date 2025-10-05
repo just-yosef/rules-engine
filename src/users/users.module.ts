@@ -6,6 +6,7 @@ import { UserModel, UserSchema } from "./user.model";
 import { IsNeedRefreshToken } from 'src/auth/middlewares';
 import { AuthModule } from 'src/auth/auth.module';
 import { EmailsModule } from 'src/emails/emails.module';
+
 import { RateLimiterModule } from 'nestjs-rate-limiter';
 
 @Module({
@@ -20,6 +21,12 @@ import { RateLimiterModule } from 'nestjs-rate-limiter';
       blockDuration: 60
     })
   ],
+
+import { RateLimiterModule } from 'nestjs-rate-limiter'
+
+@Module({
+  imports: [MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }]), AuthModule, EmailsModule, RateLimiterModule],
+
   controllers: [UsersController],
   providers: [UsersService],
 })
