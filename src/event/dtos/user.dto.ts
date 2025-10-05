@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEmail, IsEnum, IsIn, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class UserDto {
     @IsString()
@@ -25,7 +25,7 @@ export class UserDto {
     })
     segment?: "vip" | "regular" | "new";
 
-    @IsEnum(["active", "inactive", "banned"], {
+    @IsIn(["active", "inactive", "banned"], {
         message: "status must be one of: active, inactive, banned",
     })
     status: "active" | "inactive" | "banned";

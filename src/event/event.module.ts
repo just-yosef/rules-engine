@@ -9,7 +9,8 @@ import { UsersModule } from 'src/users/users.module';
   imports: [MongooseModule.forFeature([{ name: Event.name, schema: EventModel }]),
   forwardRef(() => UsersModule)
   ],
-  providers: [EventService],
-  controllers: [EventController]
+  providers: [EventService,],
+  controllers: [EventController],
+  exports: [EventService]
 })
 export class EventModule { }

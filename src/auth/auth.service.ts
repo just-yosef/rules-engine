@@ -11,12 +11,17 @@ import type {
     Response
 } from 'express';
 import { StringValue } from 'ms';
+import { UsersService } from 'src/users/users.service';
+import { UnauthorizeException } from './exceptions/Unauthorize.exception';
 type signupBody = Pick<IUserRequiredProperties, "email" | "name" | "password">
 type signinBody = Pick<IUserRequiredProperties, "email" | "password">
 
 @Injectable()
 export class AuthService {
-    constructor(@InjectModel(UserModel.name) private readonly User: Model<IUserDocument>) { }
+    constructor(
+        @InjectModel(UserModel.name) private readonly User: Model<IUserDocument>,
+        private readonly usersService: UsersService
+    ) { }
 
     async signup(data: signupBody) {
         try {
@@ -42,27 +47,25 @@ export class AuthService {
     }
 
     async signin(dto: signinBody) {
-        try {
-            const { email, password } = dto;
-            const user = await this.User.findOne({ email }).lean();
-            if (!user) {
-                throw new NotFoundException('Invalid credentials');
-            }
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (!isPasswordValid) {
-                throw new UnauthorizedException('Invalid email or password');
-            }
-            const payload = { id: user._id, email: user.email };
-            const token = signJWT(payload, { expiresIn: process.env.TOKEN_EXPIRATION! as StringValue })
-            const refreshToken = signJWT(payload, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION! as StringValue })
-            return {
-                token,
-                refreshToken,
-                user
-            }
-        } catch (error) {
-            throw new HttpException(error, 400, { cause: error.message })
+        const { email, password } = dto;
+        const user = await this.User.findOne({ email }).lean();
+        if (user?.status === "blocked") throw new BadRequestException("Your Account Has Been Blocked Please Call Help Center To Unblock, Thanks!")
+        if (!user) {
+            throw new NotFoundException('Invalid credentials');
         }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new UnauthorizedException('Invalid email or password');
+        }
+        const payload = { id: user._id, email: user.email };
+        const token = signJWT(payload, { expiresIn: process.env.TOKEN_EXPIRATION! as StringValue })
+        const refreshToken = signJWT(payload, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION! as StringValue })
+        return {
+            token,
+            refreshToken,
+            user
+        }
+
     }
 
     async signout(@Res({ passthrough: true }) res: Response, @Req() req: Request) {

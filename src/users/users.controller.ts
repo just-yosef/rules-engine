@@ -31,7 +31,15 @@ export class UsersController {
         errorMessage: 'You can verify your email again after 1 minute',
         keyPrefix: 'verify-email',
     })
-    @Patch('/verify-my-email')
+
+    @Get('/:id')
+    async getUser(@Param('id') id: string) {
+        return await this.usersService.findOne(id);
+    }
+
+    @UseGuards(IsLoggedIn, RateLimiterGuard)
+    @RateLimit({ points: 3, duration: 60, errorMessage: "you can verify your email after 1 min ago" })
+    @Patch("/verify-my-email")
     async verifyEmail(
         @CurrentUser() { id }: Pick<IUserRequiredProperties, 'id'>,
     ) {
@@ -51,10 +59,6 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-    @Get('/:id')
-    async getUser(@Param('id') id: string) {
-        return this.usersService.findOne(id);
-    }
 
     @UseGuards(IsLoggedIn)
     @RateLimit({
@@ -71,6 +75,8 @@ export class UsersController {
     @UseGuards(IsLoggedIn)
     @UseInterceptors(IsAdmin)
     @Patch('/:id')
+    // @UseInterceptors(IsAdmin)
+    @Patch("/:id")
     async updateUser(
         @Param('id') id: string,
         @Body() dto: UpdateUserDto,

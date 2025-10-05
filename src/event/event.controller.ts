@@ -2,7 +2,14 @@ import { Body, Controller, Delete, Get, Param, Post, UseGuards, UseInterceptors 
 import { EventService } from './event.service';
 import { EventDto } from './dtos/event.dto';
 import { Event } from './event.model';
+<<<<<<< HEAD
 import { IsAdmin } from 'src/auth/interceptors';
+=======
+import { IsLoggedIn } from 'src/auth/guards';
+import { IsAdmin } from 'src/auth/interceptors';
+@UseGuards(IsLoggedIn)
+@UseInterceptors(IsAdmin)
+>>>>>>> 2fbd206f66842ae46b2080a67b82c68960349b17
 @Controller('event')
 export class EventController {
     constructor(private readonly eventService: EventService) { }
