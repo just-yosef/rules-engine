@@ -6,6 +6,8 @@ import { IUserRequiredProperties } from "../types";
 @Exclude()
 export class ExcludePassword implements Partial<IUserRequiredProperties> {
     @Expose()
+    _id: string
+    @Expose()
     name?: string | undefined;
     @Expose()
     email?: string | undefined;
