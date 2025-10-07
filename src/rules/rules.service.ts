@@ -27,7 +27,6 @@ export class RulesService {
     async getRuleById(id: string) {
         try {
             const rule = await this.Rule.findById(id);
-            console.log(rule);
             if (!rule) {
                 throw new HttpException("Rule Not Found", HttpStatus.NOT_FOUND);
             }
@@ -39,11 +38,9 @@ export class RulesService {
     async getRuleByName(name: string) {
         try {
             const pattern = new RegExp(name, 'gi');
-            console.log(pattern);
             const rules = await this.Rule.find({
                 eventName: { $regex: pattern }
             });
-            console.log(rules);
             if (!rules || rules.length === 0) {
                 throw new HttpException("No Rules Found With This Name", HttpStatus.NOT_FOUND);
             }
