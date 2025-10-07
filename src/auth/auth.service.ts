@@ -108,7 +108,6 @@ export class AuthService {
             refreshToken,
             payload
         }
-
     }
 
     async signout(@Res({ passthrough: true }) res: Response) {
