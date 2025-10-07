@@ -5,7 +5,6 @@ import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class IsLoggedInMiddleware implements NestMiddleware {
     constructor(private readonly usersService: UsersService) { }
-
     async use(req: Request, res: Response, next: NextFunction) {
         try {
             const token = req.cookies?.jwt;

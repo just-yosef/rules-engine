@@ -14,6 +14,7 @@ export const UserSchema = new Schema<IUserDocument>({
     updatedAt: { type: Date, default: () => new Date() },
     isVerify: { type: Boolean, default: false },
     otp: { type: String, default: undefined },
+    ip: { type: String, }
 
 }, { timestamps: true });
 

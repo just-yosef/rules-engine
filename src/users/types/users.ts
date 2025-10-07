@@ -1,6 +1,3 @@
-import { Types } from "mongoose";
-import { UserRole } from "../constants/users";
-
 type UserSegment =
     | "new_user"
     | "loyal_customer"
@@ -33,13 +30,15 @@ interface SecurityProperties {
     twoFactorEnabled?: boolean;
     twoFactorSecret?: string;
     otp: string | undefined
+    ip: string
 }
 interface IUser extends IUserProfile, IUserRequiredProperties, SecurityProperties { }
-
+type UserInRequest = Pick<IUser, "email" | "roles" | "isVerify" | "id" | "_id" | "otp" | "ip">
 export type {
-    IUser
-    , IUserProfile,
+    IUser,
+    IUserProfile,
     IUserRequiredProperties,
     SecurityProperties,
-    UserSegment
+    UserSegment,
+    UserInRequest
 }

@@ -7,6 +7,7 @@ import { CreateUserDto, UpdateUserDto, UpdateVerifyDto, } from './dtos';
 import { randomBytes, } from "crypto"
 import { EmailsService } from 'src/emails/emails.service';
 import { UnauthorizeException } from 'src/auth/exceptions/Unauthorize.exception';
+import { UserInRequest } from './types';
 
 
 @Injectable()
@@ -57,7 +58,7 @@ export class UsersService {
 
         return updatedUser;
     }
-    async verifyOtp(id: string, user: IUserDocument) {
+    async verifyOtp(id: string, user: UserInRequest) {
         if (!user?.otp) return { message: "You Dont Have Otp" }
         if (user.otp && id !== user.otp) throw new UnauthorizeException("Please Verify Your Email With Your Own Data");
         const updatedUser = await this.User.findByIdAndUpdate(user._id, { isVerify: true, $unset: { otp: "" } }, { new: true });

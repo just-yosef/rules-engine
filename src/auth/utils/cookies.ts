@@ -25,3 +25,10 @@ export function setRefreshTokenCookie(res: Response, refreshToken: string) {
         maxAge: ms(process.env.REFRESH_TOKEN_EXPIRATION! as StringValue),
     });
 }
+
+export function setCookie(res: Response, value: string, key: string, expiresIn: number) {
+    res.cookie(key, value, {
+        httpOnly: true,
+        maxAge: expiresIn,
+    });
+}

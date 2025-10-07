@@ -3,5 +3,6 @@ export type {
     IUserProfile,
     IUserRequiredProperties,
     SecurityProperties,
-    UserSegment
+    UserSegment,
+    UserInRequest
 } from "./users"

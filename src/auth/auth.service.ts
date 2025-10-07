@@ -14,9 +14,10 @@ import { UsersService } from 'src/users/users.service';
 import { UnauthorizeException } from './exceptions/Unauthorize.exception';
 import { EmailsService } from 'src/emails/emails.service';
 import { EventService } from 'src/event/event.service';
-import { setAuthCookies } from './utils';
+import { setAuthCookies, setCookie } from './utils';
 import { EventDto } from 'src/event/dtos/event.dto';
 import { UserStatus } from 'src/event/users/types';
+import { extractUserInfo, getUserIP } from './helpers';
 type signupBody = Pick<IUserRequiredProperties, "email" | "name" | "password">
 type signinBody = Pick<IUserRequiredProperties, "email" | "password">
 
@@ -32,6 +33,7 @@ export class AuthService {
 
     async signup(data: signupBody) {
         try {
+            const ip = await getUserIP();
             const { name, email, password } = data;
             const existingUser = await this.User.findOne({ email });
             if (existingUser) throw new BadRequestException('Email already Exists')
@@ -40,6 +42,7 @@ export class AuthService {
                 name,
                 email,
                 password: hashedPassword,
+                ip
             });
             await user.save();
             return user
@@ -55,9 +58,7 @@ export class AuthService {
 
     async signin(dto: signinBody, req: Request, res: Response) {
         let loginTimes = req.cookies["login-times"] || 0;
-        res.cookie("login-times", ++loginTimes, {
-            maxAge: ms('10m')
-        })
+        setCookie(res, ++loginTimes + "", "login-times", ms('10m'))
         if (loginTimes >= 10) {
             const user = await this.usersService.findUserByName(dto.email)
             await this.usersService.blockUser(user.email);
@@ -75,7 +76,15 @@ export class AuthService {
         if (!isPasswordValid) {
             throw new UnauthorizedException('Invalid email or password');
         }
-        const payload = { id: user._id, email: user.email };
+        const ip = await getUserIP()
+        if (user.ip !== ip) {
+            const country = await extractUserInfo(ip);
+            await this.usersService.blockUser(user.email)
+            const mail = { toEmail: user.email, message: `Someone In ${country.city} based in ${country.countryName} try to login with your account, we has suspend your account .. verify it and try to login again` }
+            await this.emailService.sendEmail(mail);
+            throw new BadRequestException("please check your email and try again")
+        }
+        const payload = { id: user._id, email: user.email, roles: user.roles, isVerify: user.isVerify };
         const token = signJWT(payload, { expiresIn: process.env.TOKEN_EXPIRATION! as StringValue })
         const refreshToken = signJWT(payload, { expiresIn: process.env.REFRESH_TOKEN_EXPIRATION! as StringValue })
         setAuthCookies(res, token, refreshToken);
@@ -93,18 +102,19 @@ export class AuthService {
         await this.emailService.sendEmail(mail)
         await this.eventService.create(event);
         console.log("User Logged In And Event Created");
-        
+
         return {
             token,
             refreshToken,
-            user
+            payload
         }
+
     }
 
-    async signout(@Res({ passthrough: true }) res: Response, @Req() req: Request) {
+    async signout(@Res({ passthrough: true }) res: Response) {
         res.clearCookie('jwt');
         res.clearCookie('refreshToken');
-
+        res.clearCookie('login-times');
         return { message: 'Signed out successfully' };
     }
 }
