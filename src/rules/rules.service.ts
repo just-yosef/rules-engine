@@ -1,12 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RuleDto } from './dtos';
 import { Rule } from './models';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 @Injectable()
 export class RulesService {
     constructor(
-        @InjectModel(Rule.name) private Rule: Model<Rule>
+        @InjectModel(Rule.name) private Rule: Model<Rule>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache
     ) { }
     async createRule(data: RuleDto) {
         try {
@@ -18,12 +20,16 @@ export class RulesService {
     }
     async getRules() {
         try {
-            const rules = await this.Rule.find()
-            return rules
+            const cachedRules = await this.cacheManager.get('rules');
+            if (cachedRules) return cachedRules
+            const rules = await this.Rule.find();
+            await this.cacheManager.set('rules', rules);
+            return rules;
         } catch (error) {
-            throw new HttpException("Failed To Get Rules", HttpStatus.NOT_FOUND)
+            throw new HttpException('Failed to get rules', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     async getRuleById(id: string) {
         try {
             const rule = await this.Rule.findById(id);
