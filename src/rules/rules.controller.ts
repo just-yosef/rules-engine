@@ -4,6 +4,7 @@ import { RuleDto } from './dtos';
 import { HaveRequiredRoles, IsLoggedIn } from 'src/auth/guards';
 import { Roles } from 'src/auth/decorators';
 import type { Request } from 'express';
+import { CacheTTL } from '@nestjs/cache-manager';
 
 @UseGuards(IsLoggedIn)
 @Controller('rules')
@@ -15,9 +16,9 @@ export class RulesController {
     async createRule(@Body() rule: RuleDto) {
         return this.rulesService.createRule(rule)
     }
+    // @CacheTTL(600)
     @Get()
     async getAllRules(@Req() req: Request,@Query("name") name?: string) {
-    
         if (name) {
             return this.rulesService.getRuleByName(name)
         }

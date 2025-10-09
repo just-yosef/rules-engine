@@ -13,7 +13,6 @@ export class IsValidSession implements NestMiddleware {
         const { cookies } = req;
         const token = cookies.jwt
         const currentSession = await this.sessionService.getSessionsByToken(token);
-        console.log(currentSession);
         if (!currentSession) return res.json({ status: 401, message: "session expired" })
         next()
     }

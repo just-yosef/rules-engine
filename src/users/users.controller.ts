@@ -19,7 +19,7 @@ import type { IUserRequiredProperties } from './types';
 import type { Request } from 'express';
 import { RateLimiterGuard, RateLimit } from 'nestjs-rate-limiter';
 
-// @UseInterceptors(ExecludePassword)
+@UseInterceptors(ExecludePassword)
 @UseGuards(RateLimiterGuard)
 @Controller('users')
 export class UsersController {
@@ -42,7 +42,6 @@ export class UsersController {
     @RateLimit({ points: 3, duration: 60, errorMessage: "you can verify your email after 1 min ago" })
     @Patch("/verify-my-email")
     async verifyEmail(
-        // @CurrentUser() { id }: Pick<IUserRequiredProperties, 'id'>,
         @Body() user: IUserRequiredProperties
     ) {
         return this.usersService.verifyEmail(user.id!);
