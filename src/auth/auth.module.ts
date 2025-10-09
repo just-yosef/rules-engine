@@ -8,6 +8,7 @@ import { UsersModule } from 'src/users/users.module';
 import { ExecludePassword, IsAdmin } from './interceptors';
 import { EventModule } from 'src/event/event.module';
 import { EmailsModule } from 'src/emails/emails.module';
+import { SessionModule } from 'src/session/session.module';
 
 
 @Module({
@@ -15,14 +16,13 @@ import { EmailsModule } from 'src/emails/emails.module';
     MongooseModule.forFeature([{ name: UserModel.name, schema: UserSchema }]),
     forwardRef(() => UsersModule),
     forwardRef(() => EventModule),
-    EmailsModule
+    EmailsModule,
+    SessionModule
   ],
   providers: [AuthService, IsLoggedIn, IsAdmin, ExecludePassword],
   controllers: [AuthController],
   exports: [IsAdmin]
 })
 export class AuthModule {
-  // configure(consumer: MiddlewareConsumer) {
-  //   consumer.apply(IsLoggedInMiddleware).forRoutes("auth/*")
-  // }
+
 }

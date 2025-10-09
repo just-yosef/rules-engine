@@ -3,7 +3,7 @@ import type { UserRole, UserStatus } from "../constants/users";
 import { IUserRequiredProperties } from "../types";
 
 
-@Exclude()
+// @Exclude()
 export class ExcludePassword implements Partial<IUserRequiredProperties> {
     @Expose()
     _id: string
@@ -19,4 +19,6 @@ export class ExcludePassword implements Partial<IUserRequiredProperties> {
     isVerify?: boolean | undefined;
     @Expose()
     otp: string
+    @Expose()
+    ip: string
 }

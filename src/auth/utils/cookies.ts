@@ -32,3 +32,8 @@ export function setCookie(res: Response, value: string, key: string, expiresIn: 
         maxAge: expiresIn,
     });
 }
+
+export function clearAuthCookies(res: Response,) {
+    res.clearCookie("jwt");
+    res.clearCookie("refreshToken");
+}

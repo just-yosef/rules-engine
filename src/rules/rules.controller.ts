@@ -17,6 +17,7 @@ export class RulesController {
     }
     @Get()
     async getAllRules(@Req() req: Request,@Query("name") name?: string) {
+    
         if (name) {
             return this.rulesService.getRuleByName(name)
         }

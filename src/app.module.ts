@@ -9,7 +9,8 @@ import { EventModule } from './event/event.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailsModule } from './emails/emails.module';
-import { AssignUserIP } from './auth/middlewares';
+import { AssignUserIP, IsNeedRefreshToken } from './auth/middlewares';
+import { SessionModule } from './session/session.module';
 
 
 @Module({
@@ -28,12 +29,13 @@ import { AssignUserIP } from './auth/middlewares';
     UsersModule,
     AuthModule,
     EmailsModule,
+    SessionModule,
   ],
   controllers: [AppController,],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AssignUserIP).forRoutes("*")
+    consumer.apply(IsNeedRefreshToken, AssignUserIP).forRoutes("*")
   }
 }
