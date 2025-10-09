@@ -33,7 +33,7 @@ interface SecurityProperties {
     ip: string
 }
 interface IUser extends IUserProfile, IUserRequiredProperties, SecurityProperties { }
-type UserInRequest = Pick<IUser, "email" | "roles" | "isVerify" | "id" | "_id" | "otp" | "ip">
+type UserInRequest = Pick<IUser, "email" | "roles" | "isVerify" | "id" | "_id" | "otp" | "ip"|"status">
 export type {
     IUser,
     IUserProfile,

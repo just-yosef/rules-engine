@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Patch,
@@ -14,11 +15,11 @@ import { UpdateUserDto } from './dtos';
 import { ExecludePassword, IsAdmin } from 'src/auth/interceptors';
 import { EmailConfirmedGuard, IsLoggedIn } from 'src/auth/guards';
 import { CurrentUser } from './decorators';
-import { IUserRequiredProperties } from './types';
+import type { IUserRequiredProperties } from './types';
 import type { Request } from 'express';
 import { RateLimiterGuard, RateLimit } from 'nestjs-rate-limiter';
 
-@UseInterceptors(ExecludePassword)
+// @UseInterceptors(ExecludePassword)
 @UseGuards(RateLimiterGuard)
 @Controller('users')
 export class UsersController {
@@ -41,15 +42,25 @@ export class UsersController {
     @RateLimit({ points: 3, duration: 60, errorMessage: "you can verify your email after 1 min ago" })
     @Patch("/verify-my-email")
     async verifyEmail(
-        @CurrentUser() { id }: Pick<IUserRequiredProperties, 'id'>,
+        // @CurrentUser() { id }: Pick<IUserRequiredProperties, 'id'>,
+        @Body() user: IUserRequiredProperties
     ) {
-        return this.usersService.verifyEmail(id!);
+        return this.usersService.verifyEmail(user.id!);
     }
 
-    @UseGuards(IsLoggedIn)
-    @UseInterceptors(IsAdmin)
     @RateLimit({
         points: 3,
+        duration: 60,
+        errorMessage: "You can verify your email again after 1 minute",
+    })
+    @Patch("/verify-my-email/:id")
+    async verifyEmailById(@Param("id") id: string) {
+        return this.usersService.verifyUserById(id);
+    }
+
+
+    @RateLimit({
+        points: 10,
         duration: 600,
         errorMessage: 'Can not reach this endpoint for 10 minutes',
         keyPrefix: 'get-all-users',
@@ -59,8 +70,6 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-
-    @UseGuards(IsLoggedIn)
     @RateLimit({
         points: 3,
         duration: 60,
@@ -74,13 +83,20 @@ export class UsersController {
 
     @UseGuards(IsLoggedIn)
     @UseInterceptors(IsAdmin)
-    @Patch('/:id')
-    // @UseInterceptors(IsAdmin)
     @Patch("/:id")
     async updateUser(
         @Param('id') id: string,
         @Body() dto: UpdateUserDto,
     ) {
         return this.usersService.updateUser(id, dto);
+    }
+
+
+
+    // @UseGuards(IsLoggedIn, HaveRequiredRoles)
+    // @Roles('admin')
+    @Delete('delete-all')
+    async deleteAllUsers() {
+        return this.usersService.deleteAllUsers();
     }
 }

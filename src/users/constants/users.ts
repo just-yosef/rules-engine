@@ -1,3 +1,5 @@
+import { StringValue } from "ms";
+
 export const USER_ROLES = ["admin", "user", "guest", "child"] as const;
 export type UserRole = typeof USER_ROLES[number];
 export const USER_STATUS = ["active", "pending", "blocked"] as const;
@@ -19,7 +21,7 @@ export const USER_VALIDATION_MESSAGES = {
     STATUS_INVALID: `Status must be one of: ${USER_STATUS.join(", ")}`,
     SEGMENT_INVALID: `Segment must be one of: ${USER_SEGMENTS.join(", ")}`
 };
-
+export const JWT_EXPIRESS_OPTIONS = { expiresIn: process.env.TOKEN_EXPIRATION! as StringValue }
 export const PASSWORD_MIN_LENGTH = 6;
 export const MAX_FAILED_LOGIN_ATTEMPTS = 5;
 export const JWT_ACCESS_EXPIRES_IN = '15m';

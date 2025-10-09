@@ -7,7 +7,6 @@ export class IsEmailBlocked implements NestInterceptor {
     constructor(private readonly usersService: UsersService) { }
     async intercept(context: ExecutionContext, next: CallHandler<any>): Promise<Observable<any>> {
         const req = context.switchToHttp().getRequest<Request>();
-        console.log(req.user);
         const user = await this.usersService.findOne(req.user?._id!);
         if (!user) {
             throw new UnauthorizedException('User not found');
