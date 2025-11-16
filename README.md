@@ -1,4 +1,4 @@
-# NestJS Backend Project
+# Rules Engine Project
 
 A **secure, modular, and production-ready backend** built with **NestJS**, MongoDB, and Redis.  
 This project implements authentication, authorization, caching, rate limiting, event-driven actions, and request validation, following best practices for clean architecture and scalability.
